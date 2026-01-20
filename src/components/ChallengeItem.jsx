@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import { ChallengesContext } from "../store/challenges-context.jsx";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 export default function ChallengeItem({
   challenge,
   onViewDetails,
@@ -15,7 +15,7 @@ export default function ChallengeItem({
       day: "2-digit",
       month: "short",
       year: "numeric",
-    }
+    },
   );
 
   function handleCancel() {
@@ -27,7 +27,7 @@ export default function ChallengeItem({
   }
 
   return (
-    <li>
+    <motion.li layout exit={{ opacity: 0, y: -30 }}>
       <article className="challenge-item">
         <header>
           <img {...challenge.image} />
@@ -42,28 +42,34 @@ export default function ChallengeItem({
             </p>
           </div>
         </header>
-        <div
-          className={"challenge-item-details "}
-        >
+        <div className={"challenge-item-details "}>
           <p>
             <button onClick={onViewDetails}>
               View Details{" "}
               <motion.span
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
-                className="challenge-item-details-icon">&#9650;</motion.span>
+                className="challenge-item-details-icon"
+              >
+                &#9650;
+              </motion.span>
             </button>
           </p>
-
-          {isExpanded && (
-            <div>
-              <p className="challenge-item-description">
-                {challenge.description}
-              </p>
-            </div>
-          )}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <p className="challenge-item-description">
+                  {challenge.description}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </article>
-    </li>
+    </motion.li>
   );
 }
